@@ -87,8 +87,9 @@ def tsv_rows(text):
     if not body.strip():
         return []
     i = body.find('Dataset TSV:')
-    if i < 0:
-        raise ValueError('risposta senza tabella: ' + body[:200])
+    if i < 0:  # nessun risultato nel periodo: niente da aggiungere
+        print('avviso: risposta senza tabella: ' + body[:120].replace('\n', ' '))
+        return []
     lines = [l for l in body[i + 12:].strip().split('\n')]
     head = [(re.search(r'\[([^\]]+)\]', c) or re.match(r'(.*)', c)).group(1).strip() for c in lines[0].split('\t')]
     out = []
@@ -134,8 +135,9 @@ def main():
     f = IN / 'emails_daily.txt'
     if f.exists():
         rows = tsv_rows(f.read_text())
-        for r in rows:
-            emails[day(r['hs_timestamp'])] = int(float(r['count'] or 0))
+        for r in rows:  # prima colonna = giorno, ultima = conteggio
+            v = list(r.values())
+            emails[day(v[0])] = int(float(v[-1] or 0))
         report.append(f'email/giorno: {len(rows)} giorni aggiornati')
 
     replies = load('replies.json', {})
