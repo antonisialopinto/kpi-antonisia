@@ -1,0 +1,4 @@
+raw/in/*.txt
+raw/store/
+__pycache__/
+*.pyc

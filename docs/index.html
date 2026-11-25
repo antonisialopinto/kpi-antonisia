@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>KPI Antonisia · NOTONLYDESK</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='16' r='7' fill='%2335aae1'/%3E%3Ccircle cx='22' cy='16' r='7' fill='%23ff5236'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main id="login" class="login">
+  <form class="login-card" id="login-form" autocomplete="on">
+    <div class="brand"><i></i>NOTONLYDESK</div>
+    <h1>KPI Antonisia</h1>
+    <p class="muted">Accesso riservato.</p>
+    <label for="pw">Password</label>
+    <input id="pw" name="password" type="password" autocomplete="current-password" required>
+    <label class="remember"><input id="remember" type="checkbox"> Ricordami su questo dispositivo</label>
+    <button type="submit" class="btn dark">Entra</button>
+    <p class="error" id="login-error" hidden>Password errata. Riprova.</p>
+    <p class="error" id="load-error" hidden>Dati non raggiungibili. Ricarica la pagina tra qualche minuto.</p>
+  </form>
+</main>
+
+<div id="app" class="wrap" hidden>
+  <header class="head">
+    <div>
+      <div class="brand"><i></i>NOTONLYDESK</div>
+      <h1>KPI Antonisia</h1>
+      <p class="muted">Sequenze email, chiamate, appuntamenti fissati per Nicholas e compenso.</p>
+    </div>
+    <div class="head-right">
+      <span class="sync" id="sync">—</span>
+      <span class="range" id="range">—</span>
+      <button type="button" class="btn" id="logout">Esci</button>
+    </div>
+  </header>
+
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Periodo">
+      <button type="button" data-preset="settimana">Questa settimana</button>
+      <button type="button" data-preset="7">Ultimi 7 giorni</button>
+      <button type="button" data-preset="14">Ultimi 14 giorni</button>
+      <button type="button" data-preset="mese">Questo mese</button>
+      <button type="button" data-preset="mese_scorso">Mese scorso</button>
+      <button type="button" data-preset="tutto">Da agosto</button>
+    </div>
+    <div class="dates">
+      <input id="dal" type="date" min="2026-01-01" max="2099-12-31" aria-label="Dal">
+      <span>→</span>
+      <input id="al" type="date" min="2026-01-01" max="2099-12-31" aria-label="Al">
+      <button type="button" class="btn" id="apply">Applica</button>
+    </div>
+    <div class="seg" role="group" aria-label="Raggruppa per">
+      <button type="button" data-grana="giorno">Giorno</button>
+      <button type="button" data-grana="settimana">Settimana</button>
+      <button type="button" data-grana="mese">Mese</button>
+    </div>
+  </div>
+
+  <section class="tiles">
+    <div class="tile"><div class="l">Appuntamenti fissati</div><div class="v" data-t="fissati">—</div><div class="s"><span data-t="setting_call">—</span> da chiamata · <span data-t="setting_email">—</span> da email</div></div>
+    <div class="tile"><div class="l">Appuntamenti tenuti da Nicholas</div><div class="v" data-t="tenuti">—</div><div class="s"><span data-t="in_agenda">—</span> in agenda · <span data-t="persi">—</span> persi</div></div>
+    <div class="tile"><div class="l">Convertito da miei appuntamenti</div><div class="v" data-t="valore" data-f="e">—</div><div class="s"><span data-t="firmati">—</span> contratti firmati</div></div>
+    <div class="tile money"><div class="l">Compenso stimato</div><div class="v" data-t="compenso" data-f="e">—</div><div class="s"><span data-t="compenso_app" data-f="e">—</span> da appuntamenti · <span data-t="provvigione" data-f="e">—</span> da 10%</div></div>
+  </section>
+
+  <section class="card">
+    <div class="scroll">
+      <table class="kpi">
+        <thead>
+          <tr class="grp">
+            <th></th>
+            <th class="g" colspan="6">Email</th>
+            <th class="g" colspan="4">Chiamate</th>
+            <th class="g" colspan="5">Appuntamenti</th>
+            <th class="g" colspan="3">Conversione</th>
+            <th class="g gm" colspan="3">Compenso</th>
+          </tr>
+          <tr>
+            <th>Periodo</th>
+            <th class="g">Inviate</th><th>% Apert.</th><th>% Click</th><th>Risposte</th><th>% Risp.</th><th>Setting</th>
+            <th class="g">Tentativi</th><th>Connesse</th><th>% Risp.</th><th>Setting</th>
+            <th class="g">Fissati</th><th>In agenda</th><th>Tenuti</th><th>Persi</th><th>% Tenuti</th>
+            <th class="g">Firmati</th><th>Valore</th><th>% Conv.</th>
+            <th class="g">Appunt.</th><th>10%</th><th>Totale</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+        <tfoot id="tot"></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <p class="legend"><b>Come leggere i colori.</b> Ogni cella è colorata rispetto alla media dei periodi mostrati: <span class="ok">azzurro = sopra media</span>, <span class="bad">arancio = sotto</span>, senza colore = in media. <b>Tenuti</b> = appuntamenti che Nicholas ha già fatto (trattativa passata oltre "Appointment Scheduled"). <b>In agenda</b> = appuntamenti fissati che non hanno ancora cambiato fase. Gli appuntamenti contano nel giorno in cui sono stati fissati, i contratti nel giorno della firma. <b>% Apert.</b> e <b>% Click</b> arrivano dai numeri di Crono settimanali: si vedono raggruppando per settimana o per mese.</p>
+
+  <section class="card">
+    <h2>Appuntamenti fissati nel periodo</h2>
+    <p class="note">Ogni azienda una volta sola. Lo stato viene dalla fase della trattativa su HubSpot: "Senza trattativa" vuol dire che l'appuntamento è contato ma la trattativa va ancora creata.</p>
+    <div class="scroll">
+      <table class="list">
+        <thead><tr><th>Azienda</th><th>Fissato il</th><th>Canale</th><th>Stato</th><th class="n">Valore trattativa</th></tr></thead>
+        <tbody id="app-list"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Metriche Crono settimanali</h2>
+    <p class="note">Inviate, aperture uniche e click unici di tutte le sequenze, presi da Crono ogni settimana.</p>
+    <div class="scroll">
+      <table class="list">
+        <thead><tr><th>Settimana</th><th class="n">Inviate</th><th class="n">Aperture</th><th class="n">Click</th><th class="n">% Apert.</th><th class="n">% Click</th></tr></thead>
+        <tbody id="crono-list"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <details class="defs">
+    <summary>Da dove arrivano i numeri</summary>
+    <dl>
+      <dt>Inviate</dt><dd>Email che Crono registra su HubSpot a nome di Antonisia, senza risposte e messaggi automatici.</dd>
+      <dt>Risposte</dt><dd>Risposte reali alle sequenze (oggetto che inizia con R: o Re:), esclusi fuori ufficio e risposte automatiche.</dd>
+      <dt>Tentativi, connesse</dt><dd>Chiamate fatte da Crono e registrate su HubSpot, più lo storico del registro chiamate. Connesse = esito Connected o Meeting booked (nello storico: tutto tranne non risponde, segreteria, numero errato).</dd>
+      <dt>Setting da chiamata</dt><dd>Appuntamenti il cui invito è partito lo stesso giorno di una chiamata allo stesso contatto (nello storico: esito Appuntamento fissato). Setting da email = gli altri.</dd>
+      <dt>Appuntamento fissato</dt><dd>Invito in calendario con un contatto di un'azienda intitolato "NOTONLYDESK x …", "NOD x …" o "Presentazione NOTONLYDESK …", oppure trattativa entrata in "Appointment Scheduled", più lo storico. Vale la data in cui è stato fissato. La stessa azienda conta una volta.</dd>
+      <dt>% Apertura, % Click</dt><dd>Aperture uniche e click unici divisi per le email inviate, con i numeri di Crono settimanali. Le aperture sono gonfiate dai filtri privacy: servono a confrontare le settimane.</dd>
+      <dt>Firmati, valore</dt><dd>Trattative di Antonisia in "Closed Won", alla data di chiusura.</dd>
+      <dt>Compenso</dt><dd>35 € per ogni appuntamento fissato più il 10% del valore firmato.</dd>
+      <dt>Aggiornamento</dt><dd>I dati vengono letti da HubSpot e pubblicati qui ogni ora, nei giorni feriali dalle 8 alle 20.</dd>
+    </dl>
+  </details>
+</div>
+
+<script src="kpi.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
